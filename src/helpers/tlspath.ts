@@ -19,12 +19,25 @@ if (platform === 'win32') {
   extension = 'so'
 
   let releaseDetails = readFileSync('/etc/os-release', 'utf8')
-  const lines = releaseDetails.split('\n')
+  const lines = releaseDetails.split('\n').slice(0, -1)
   const release: any = {}
-  lines.forEach((line, _) => {
-    // Split the line into an array of words delimited by '='
+  lines.forEach((line: any) => {
+    console.log('line', line)
+    // Skip empty lines or comment lines
+    if (!line || line.startsWith('#')) return
+
+    // Only process lines that contain an '='
+    if (!line.includes('=')) return
+
     const words = line.split('=')
-    release[words[0].trim().toLowerCase()] = words[1].trim()
+    // In case the value itself contains '=' signs, join the remaining parts
+    const key = words[0].trim().toLowerCase()
+    const value = words.slice(1).join('=').trim()
+
+    // Only add the key if a value is present
+    if (value) {
+      release[key] = value
+    }
   })
 
   if (release.id.toLowerCase().includes('ubuntu')) {
