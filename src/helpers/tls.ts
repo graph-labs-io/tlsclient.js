@@ -1,8 +1,6 @@
 import workerpool from 'workerpool'
 import { load, open } from 'ffi-rs'
 
-console.log('TLS_LIB_PATH', process.env.TLS_LIB_PATH)
-
 open({
   library: 'tls',
   path: process.env.TLS_LIB_PATH as any,
