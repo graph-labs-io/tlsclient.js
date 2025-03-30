@@ -1,10 +1,5 @@
 import { Delays, Options, Response } from 'got'
-import {
-  createAdapter,
-  DEFAULT_CLIENT_ID,
-  DEFAULT_HEADERS,
-  DEFAULT_HEADER_ORDER,
-} from './helpers/adapter.js'
+import { createAdapter, DEFAULT_CLIENT_ID } from './helpers/adapter.js'
 
 interface TLSClientConfiguration extends Options {
   proxy?: string | any
@@ -89,9 +84,4 @@ function createTLSClient(config?: TLSClientConfiguration) {
 
 export default createTLSClient
 
-export {
-  DEFAULT_CLIENT_ID,
-  DEFAULT_HEADERS,
-  DEFAULT_HEADER_ORDER,
-  createTLSClient,
-}
+export { DEFAULT_CLIENT_ID, createTLSClient }
