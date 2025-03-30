@@ -1,31 +1,26 @@
-const fs = require('fs')
-const axios = require('axios')
-const { getTLSDependencyPath } = require('./tlspath.js')
+import fs from 'fs'
+import got from 'got'
+import { getTLSDependencyPath } from './tlspath.js'
 
 function downloadFile(url, destination) {
   const file = fs.createWriteStream(destination)
-  axios({
-    url,
-    method: 'GET',
-    responseType: 'stream',
+  const downloadStream = got.stream(url)
+
+  downloadStream.pipe(file)
+
+  downloadStream.on('error', err => {
+    console.error('Error downloading tls dependencies.', err)
+    process.exit(1)
   })
-    .then(response => {
-      response.data.pipe(file)
-      return new Promise((resolve, reject) => {
-        file.on('finish', () => {
-          console.log('Downloaded tls dependencies.')
-          resolve({})
-        })
-        file.on('error', () => {
-          console.error('Error downloading tls dependencies.')
-          reject()
-        })
-      })
-    })
-    .catch(err => {
-      console.error(err)
-      process.exit(1)
-    })
+
+  file.on('finish', () => {
+    console.log('Downloaded tls dependencies.')
+  })
+
+  file.on('error', err => {
+    console.error('Error writing tls dependencies.', err)
+    process.exit(1)
+  })
 }
 
 let { DOWNLOAD_PATH, TLS_LIB_PATH } = getTLSDependencyPath()

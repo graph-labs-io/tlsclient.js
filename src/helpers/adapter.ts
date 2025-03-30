@@ -1,13 +1,11 @@
 import workerpool from 'workerpool'
-import http from 'node:http'
 import path from 'node:path'
-import { AxiosError } from 'axios'
-import { getTLSDependencyPath } from './tlspath'
+import { getTLSDependencyPath } from './tlspath.js'
 
 let { TLS_LIB_PATH } = getTLSDependencyPath()
 
-let DEFAULT_CLIENT_ID = 'chrome_133'
-let DEFAULT_HEADERS = {
+const DEFAULT_CLIENT_ID = 'chrome_133'
+const DEFAULT_HEADERS = {
   accept: '*/*',
   'accept-encoding': 'gzip, deflate, br',
   'accept-language': 'en-US,en;q=0.9',
@@ -21,7 +19,7 @@ let DEFAULT_HEADERS = {
   'user-agent':
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36',
 }
-let DEFAULT_HEADER_ORDER = [
+const DEFAULT_HEADER_ORDER = [
   'host',
   'x-real-ip',
   'x-forwarded-for',
@@ -64,17 +62,11 @@ function settle(resolve: any, reject: any, response: any) {
   if (!response.status || !validateStatus || validateStatus(response.status)) {
     resolve(response)
   } else {
-    reject(
-      new AxiosError(
-        'Request failed with status code ' + response.status,
-        [AxiosError.ERR_BAD_REQUEST, AxiosError.ERR_BAD_RESPONSE][
-          Math.floor(response.status / 100) - 4
-        ],
-        response.config,
-        response.request,
-        response
-      )
+    const error = new Error(
+      'Request failed with status code ' + response.status
     )
+    ;(error as any).response = response
+    reject(error)
   }
 }
 
@@ -83,16 +75,13 @@ export function createAdapter(_config: any) {
     TLS_LIB_PATH = _config.tlsLibPath
   }
 
-  const pool = workerpool.pool(
-    require.resolve('tlsclient.js/lib/helpers/tls.js'),
-    {
-      workerThreadOpts: {
-        env: {
-          TLS_LIB_PATH,
-        },
+  const pool = workerpool.pool(path.resolve('./lib/helpers/tls.js'), {
+    workerThreadOpts: {
+      env: {
+        TLS_LIB_PATH,
       },
-    }
-  )
+    },
+  })
   return function (config: any) {
     return new Promise(async (resolve, reject) => {
       const requestPayload = {
@@ -106,9 +95,9 @@ export function createAdapter(_config: any) {
         withDebug: false,
         forceHttp1: config.forceHttp1 || false,
         withRandomTLSExtensionOrder: config.withRandomTLSExtensionOrder || true,
-        timeoutSeconds: config.timeout / 1000 || 30,
+        timeoutSeconds: (config.timeout && config.timeout / 1000) || 30,
         timeoutMilliseconds: 0,
-        sessionId: Date.now().toString(),
+        sessionId: config.sessionId || undefined,
         isRotatingProxy: false,
         proxyUrl: config.proxy || '',
         customTlsClient: config.customTlsClient || undefined,
@@ -119,7 +108,7 @@ export function createAdapter(_config: any) {
         },
         headerOrder: config.headerOrder || DEFAULT_HEADER_ORDER,
         requestUrl: config.url,
-        requestMethod: config.method.toUpperCase(),
+        requestMethod: (config.method || 'GET').toUpperCase(),
         requestBody: config.data,
       }
       let res = await pool.exec('request', [JSON.stringify(requestPayload)])
@@ -131,14 +120,13 @@ export function createAdapter(_config: any) {
             ? resJSON.headers[key][0]
             : resJSON.headers[key]
       })
-      var response = {
-        data: resJSON.body,
-        status: resJSON.status,
-        statusText: http.STATUS_CODES[resJSON.status],
+      const response = {
+        body: resJSON.body,
+        statusCode: resJSON.status,
         headers: resHeaders,
         config,
         request: {
-          responseURL: encodeURI(
+          requestUrl: encodeURI(
             resJSON.headers && resJSON.headers.Location
               ? resJSON.headers.Location[0]
               : resJSON.target

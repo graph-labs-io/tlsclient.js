@@ -1,5 +1,6 @@
-const fs = require('fs')
-const os = require('os')
+import fs from 'fs'
+import os from 'os'
+
 const arch = os.arch()
 const platform = os.platform()
 
@@ -49,4 +50,4 @@ function getTLSDependencyPath() {
   }
 }
 
-module.exports = { getTLSDependencyPath }
+export { getTLSDependencyPath }

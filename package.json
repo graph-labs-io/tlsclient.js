@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "axios": "^1.6.5",
     "ffi-rs": "^1.2.9",
+    "got": "^14.4.6",
     "workerpool": "^9.2.0"
   },
   "scripts": {
@@ -10,11 +10,11 @@
     "postinstall": "node ./scripts/postinstall.js"
   },
   "name": "tlsclient.js",
-  "version": "1.1.2",
+  "version": "2.0.0",
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
-  "description": "An axios based wrapper for `bogdanfinn/tls-client` based on ffi-rs for unparalleled performance and usability.",
+  "description": "An got based wrapper for `bogdanfinn/tls-client` based on ffi-rs for unparalleled performance and usability.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "directories": {
@@ -42,5 +42,6 @@
   "bugs": {
     "url": "https://github.com/graph-labs-io/tlsclient.js/issues"
   },
-  "homepage": "https://github.com/graph-labs-io/tlsclient.js#readme"
+  "homepage": "https://github.com/graph-labs-io/tlsclient.js#readme",
+  "type": "module"
 }
