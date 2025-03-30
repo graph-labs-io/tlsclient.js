@@ -1,23 +1,23 @@
-import axios, { AxiosInstance, CreateAxiosDefaults } from "axios";
+import axios, { AxiosInstance, CreateAxiosDefaults } from 'axios'
 import {
   createAdapter,
   DEFAULT_CLIENT_ID,
   DEFAULT_HEADERS,
   DEFAULT_HEADER_ORDER,
-} from "./helpers/adapter";
+} from './helpers/adapter'
 
 interface TLSClientConfiguration extends CreateAxiosDefaults<any> {
-  proxy?: string | any;
-  tlsClientIdentifier?: string;
-  customTlsClient?: any;
-  tlsLibPath?: string;
-  forceHttp1?: boolean;
-  followRedirects?: boolean;
-  insecureSkipVerify?: boolean;
-  withRandomTLSExtensionOrder?: boolean;
-  timeout?: number;
-  defaultHeaders?: any;
-  headerOrder?: string[];
+  proxy?: string | any
+  tlsClientIdentifier?: string
+  customTlsClient?: any
+  tlsLibPath?: string
+  forceHttp1?: boolean
+  followRedirects?: boolean
+  insecureSkipVerify?: boolean
+  withRandomTLSExtensionOrder?: boolean
+  timeout?: number
+  defaultHeaders?: any
+  headerOrder?: string[]
 }
 
 /**
@@ -36,14 +36,14 @@ interface TLSClientConfiguration extends CreateAxiosDefaults<any> {
  * - `headerOrder` - The order of the headers.
  */
 function createTLSClient(config: TLSClientConfiguration = {}): AxiosInstance {
-  let adapter: any = createAdapter(config);
+  let adapter: any = createAdapter(config)
   return axios.create({
     adapter,
     ...config,
-  });
+  })
 }
 
-export default createTLSClient;
+export default createTLSClient
 
 export {
   DEFAULT_CLIENT_ID,
@@ -51,4 +51,4 @@ export {
   DEFAULT_HEADER_ORDER,
   TLSClientConfiguration,
   createTLSClient,
-};
+}
