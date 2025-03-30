@@ -84,7 +84,7 @@ export function createAdapter(_config: any) {
   }
 
   const pool = workerpool.pool(
-    require.resolve(path.resolve('./lib/helpers/tls.js')),
+    require.resolve('tlsclient.js/lib/helpers/tls.js'),
     {
       workerThreadOpts: {
         env: {
