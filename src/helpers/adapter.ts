@@ -1,6 +1,8 @@
 import workerpool from 'workerpool'
 import path from 'node:path'
 import { getTLSDependencyPath } from './tlspath.js'
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
 
 let { TLS_LIB_PATH } = getTLSDependencyPath()
 
@@ -75,13 +77,16 @@ export function createAdapter(_config: any) {
     TLS_LIB_PATH = _config.tlsLibPath
   }
 
-  const pool = workerpool.pool(path.resolve('./lib/helpers/tls.js'), {
-    workerThreadOpts: {
-      env: {
-        TLS_LIB_PATH,
+  const pool = workerpool.pool(
+    require.resolve('tlsclient.js/lib/helpers/tls.js'),
+    {
+      workerThreadOpts: {
+        env: {
+          TLS_LIB_PATH,
+        },
       },
-    },
-  })
+    }
+  )
   return function (config: any) {
     return new Promise(async (resolve, reject) => {
       const requestPayload = {
