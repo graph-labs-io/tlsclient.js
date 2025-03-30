@@ -22,7 +22,6 @@ if (platform === 'win32') {
   const lines = releaseDetails.split('\n').slice(0, -1)
   const release: any = {}
   lines.forEach((line: any) => {
-    console.log('line', line)
     // Skip empty lines or comment lines
     if (!line || line.startsWith('#')) return
 
