@@ -13,6 +13,7 @@ interface TLSClientConfiguration extends Options {
   timeout: Delays
   defaultHeaders?: any
   headerOrder?: string[]
+  sessionId?: string
 }
 
 /**
@@ -32,7 +33,7 @@ interface TLSClientConfiguration extends Options {
  * - `headerOrder` - The order of the headers.
  */
 function createTLSClient(config?: TLSClientConfiguration) {
-  const requestHandler = createAdapter(config)
+  const { requestHandler, destroySession, destroyAll } = createAdapter(config)
 
   const client = {
     request: async (url: string, options: TLSClientConfiguration) => {
@@ -76,6 +77,14 @@ function createTLSClient(config?: TLSClientConfiguration) {
         ...options,
         method: 'DELETE',
       } as TLSClientConfiguration)
+    },
+    destroyAll: async () => {
+      const res = await destroyAll()
+      return res
+    },
+    destroySession: async (sessionId: string) => {
+      const res = await destroySession(sessionId)
+      return res
     },
   }
 

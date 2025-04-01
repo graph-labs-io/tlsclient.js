@@ -71,4 +71,7 @@ let instance = {
 
 workerpool.worker({
   request: instance.request,
+  freeMemory: instance.freeMemory,
+  destroyAll: instance.destroyAll,
+  destroySession: instance.destroySession,
 })

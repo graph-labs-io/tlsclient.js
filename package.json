@@ -10,7 +10,7 @@
     "postinstall": "node ./scripts/postinstall.js"
   },
   "name": "tlsclient.js",
-  "version": "2.1.4",
+  "version": "2.2.0",
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
